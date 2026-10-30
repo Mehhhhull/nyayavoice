@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { ClerkProvider } from '@clerk/nextjs';
 import { DM_Mono, Hanken_Grotesk, Instrument_Serif, Noto_Sans_Devanagari, Tiro_Devanagari_Hindi } from 'next/font/google';
 import { SITE_URL } from '@/lib/data';
 import './globals.css';
@@ -44,7 +45,36 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-IN" className={`${display.variable} ${body.variable} ${mono.variable} ${deva.variable} ${devaDisplay.variable}`}>
-      <body>{children}</body>
+      <body>
+        <ClerkProvider
+          appearance={{
+            variables: {
+              colorPrimary: '#F2A93B',
+              colorPrimaryForeground: '#1A1204',
+              colorForeground: '#F3EEE3',
+              colorMutedForeground: '#B4AFA1',
+              colorBackground: '#14150F',
+              colorInput: '#0D0E0B',
+              colorInputForeground: '#F3EEE3',
+              colorBorder: '#2B2C24',
+              borderRadius: '14px',
+              fontFamily: 'var(--body)',
+            },
+            elements: {
+              card: 'auth-card',
+              headerTitle: 'auth-title',
+              headerSubtitle: 'auth-subtitle',
+              formButtonPrimary: 'auth-primary-button',
+              socialButtonsBlockButton: 'auth-social-button',
+              formFieldLabel: 'auth-label',
+              formFieldInput: 'auth-input',
+              footerActionLink: 'auth-link',
+            },
+          }}
+        >
+          {children}
+        </ClerkProvider>
+      </body>
     </html>
   );
 }

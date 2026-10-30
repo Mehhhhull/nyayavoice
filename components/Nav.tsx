@@ -1,3 +1,5 @@
+import { Show, UserButton } from '@clerk/nextjs';
+
 export default function Nav() {
   return (
     <header className="nav">
@@ -13,7 +15,17 @@ export default function Nav() {
             <li><a href="#faq">FAQ</a></li>
           </ul>
         </nav>
-        <a className="btn sm pri mag" href="#demo">Try the sample</a>
+        <div className="nav-actions">
+          <a className="btn sm pri nav-sample" href="#demo">Try the sample</a>
+          <Show when="signed-out">
+            <a className="nav-sign-in" href="/sign-in">Sign in</a>
+            <a className="btn sm" href="/sign-up">Get started</a>
+          </Show>
+          <Show when="signed-in">
+            <a className="btn sm pri" href="/dashboard">My account</a>
+            <UserButton />
+          </Show>
+        </div>
       </div>
     </header>
   );
