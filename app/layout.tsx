@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import { DM_Mono, Hanken_Grotesk, Instrument_Serif, Noto_Sans_Devanagari, Tiro_Devanagari_Hindi } from 'next/font/google';
 import { SITE_URL } from '@/lib/data';
 import './globals.css';
+import { ClerkProvider } from '@clerk/nextjs';
+import { dark } from '@clerk/ui/themes';
 
 const display = Instrument_Serif({ weight: '400', style: ['normal', 'italic'], subsets: ['latin'], variable: '--font-display', display: 'swap' });
 const body = Hanken_Grotesk({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
@@ -43,8 +45,17 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={`${display.variable} ${body.variable} ${mono.variable} ${deva.variable} ${devaDisplay.variable}`}>
-      <body>{children}</body>
-    </html>
+    <ClerkProvider
+    appearance={{
+      theme:dark,
+      variables: {
+        colorPrimary: '#0D0E0B',
+        colorForeground: '#F5F5F5' },
+      }}
+    >
+      <html lang="en-IN" className={`${display.variable} ${body.variable} ${mono.variable} ${deva.variable} ${devaDisplay.variable}`}>
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }

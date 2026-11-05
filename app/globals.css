@@ -43,12 +43,14 @@ h2 em{color:var(--saffron);font-style:italic}
 .nav ul{display:flex;gap:28px;font-size:.92rem;color:var(--paper-dim)}
 .nav ul a{text-decoration:none;transition:color .2s}
 .nav ul a:hover{color:var(--paper)}
+.nav-actions{display:flex;align-items:center;gap:12px;white-space:nowrap}
 .btn{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--paper);background:transparent;color:var(--paper);padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:500;font-size:.96rem;transition:background .25s,color .25s,border-color .25s,transform .35s var(--ease);will-change:transform}
 .btn:hover{background:var(--paper);color:var(--ink)}
 .btn.pri{background:var(--saffron);border-color:var(--saffron);color:var(--saffron-ink)}
 .btn.pri:hover{background:var(--paper);border-color:var(--paper)}
 .btn.sm{padding:8px 16px;font-size:.88rem}
 @media(max-width:760px){.nav ul{display:none}}
+@media(max-width:560px){.nav-demo{display:none}}
 
 /* hero */
 .hero{padding-top:clamp(40px,7vw,88px);padding-bottom:clamp(48px,7vw,96px);overflow:hidden}

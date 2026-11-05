@@ -1,3 +1,6 @@
+import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
+import { Suspense } from 'react';
+
 export default function Nav() {
   return (
     <header className="nav">
@@ -13,7 +16,21 @@ export default function Nav() {
             <li><a href="#faq">FAQ</a></li>
           </ul>
         </nav>
-        <a className="btn sm pri mag" href="#demo">Try the sample</a>
+        <div className="nav-actions">
+          <Suspense fallback={null}>
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <button className="btn sm">Sign in</button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="btn sm pri">Sign up</button>
+              </SignUpButton>
+            </Show>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
+          </Suspense>
+        </div>
       </div>
     </header>
   );
