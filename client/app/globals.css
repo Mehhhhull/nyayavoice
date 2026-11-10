@@ -75,6 +75,38 @@ h2 em{color:var(--saffron);font-style:italic}
 .trust b{width:8px;height:8px;border-radius:50%;background:var(--saffron);display:inline-block;animation:pulse 2.4s infinite}
 @keyframes pulse{50%{opacity:.35}}
 
+.hero.hero-redesign{min-height:max(720px,calc(100svh - 62px));display:flex;flex-direction:column;padding:clamp(38px,6vh,64px) 0 0;background:var(--ink);color:var(--paper)}
+.hero.hero-redesign>.ghost{right:-2vw;top:2%;opacity:.45}
+.hero.hero-redesign .wrap{display:block;width:100%;max-width:980px;margin-inline:auto;z-index:1;text-align:center}
+.hero.hero-redesign .hero-copy{max-width:760px;margin-inline:auto}
+.hero.hero-redesign .eyebrow{color:var(--saffron);font-size:.7rem;letter-spacing:.16em}
+.hero.hero-redesign h1{margin-top:16px;font-size:clamp(3.6rem,8vw,7.2rem);line-height:.84;letter-spacing:-.035em;color:var(--paper)}
+.hero.hero-redesign .hero-copy h1 .ln1 span{color:var(--paper);font-style:normal}
+.hero.hero-redesign .hero-copy h1 .ln1:last-child span{color:var(--saffron);font-style:italic}
+.hero.hero-redesign .roll{height:1.9rem;margin-top:18px;font-size:1.15rem}
+.hero.hero-redesign .roll p{justify-content:center;color:var(--paper-dim)}
+.hero.hero-redesign .roll p.hi{font-size:1.3rem;color:var(--paper)}
+.hero.hero-redesign .lead{max-width:54ch;margin:16px auto 0;color:var(--paper-dim);font-size:1rem}
+.hero.hero-redesign .cta-row{justify-content:center;margin-top:22px}
+.hero.hero-redesign .trust{justify-content:center;margin-top:16px;color:var(--paper-faint);font-size:.7rem}
+.hero.hero-redesign .trust b{background:var(--saffron)}
+.hero-flow{position:absolute;top:clamp(340px,42vh,400px);left:0;z-index:0;width:100%;overflow:hidden}
+.hero-flow-stage{position:relative;width:100%;height:380px;overflow:hidden}
+.hero-flow-svg{position:absolute;left:50%;top:0;width:1600px;height:380px;margin-left:-800px;overflow:visible}
+.hero-flow-ribbon{fill:none;stroke:var(--saffron);stroke-width:46;stroke-linecap:butt}
+.hero-flow-ribbon-text{fill:var(--saffron-ink);font:600 22px var(--body,system-ui,sans-serif);white-space:pre}
+.hero-flow-ghost{fill:var(--paper-dim);opacity:.5;font:500 21px var(--body,system-ui,sans-serif);white-space:pre}
+.hero-flow-measure{opacity:0;pointer-events:none}
+.hero-flow-word{position:absolute;left:50%;bottom:132px;z-index:2;transform:translateX(-50%);white-space:nowrap;font:600 clamp(1.35rem,2.4vw,1.8rem)/1 var(--body,system-ui,sans-serif);letter-spacing:-.01em;color:var(--paper);animation:hero-flow-word 2.6s ease both}
+@keyframes hero-flow-word{0%{opacity:0;transform:translate(-50%,10px)}12%,84%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-8px)}}
+.hero-flow-pill{position:absolute;left:50%;bottom:24px;z-index:3;display:flex;width:184px;height:86px;align-items:center;justify-content:center;gap:3px;transform:translateX(-50%);border:2px solid var(--paper);border-radius:999px;background:var(--ink);box-shadow:0 0 0 0 color-mix(in srgb,var(--saffron) 38%,transparent);animation:hero-flow-pulse 2.8s ease-out infinite}
+@keyframes hero-flow-pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--saffron) 38%,transparent)}70%,100%{box-shadow:0 0 0 22px transparent}}
+.hero-flow-pill i{display:block;width:3px;height:var(--bar-height);border-radius:3px;background:var(--paper);animation:hero-flow-bar 1.15s ease-in-out infinite;animation-delay:calc(var(--bar-index)*-.083s)}
+.hero-flow-pill i:nth-child(3n){background:var(--saffron)}
+@keyframes hero-flow-bar{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@media(max-width:700px){.hero.hero-redesign{min-height:max(700px,calc(100svh - 62px));padding-top:38px}.hero.hero-redesign h1{font-size:clamp(3.2rem,11vw,5rem)}.hero.hero-redesign .lead{max-width:38ch;font-size:.96rem}.hero-flow{top:clamp(240px,34vh,285px)}.hero-flow-stage{height:280px}.hero-flow-svg{transform:scale(.72);transform-origin:50% 100%}.hero-flow-word{bottom:112px}.hero-flow-pill{width:166px;height:76px;bottom:18px}}
+@media(prefers-reduced-motion:reduce){.hero-flow-word{animation:none;opacity:1}.hero-flow-pill,.hero-flow-pill i{animation:none}.hero-flow-pill i{transform:scaleY(.7)}}
+
 /* demo card */
 .demo{background:var(--ink-2);border:1px solid var(--line);border-radius:22px;padding:18px;position:relative;box-shadow:0 40px 80px -40px rgba(0,0,0,.8)}
 .demo-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
