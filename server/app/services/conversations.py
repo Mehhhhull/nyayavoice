@@ -4,30 +4,35 @@ from uuid import UUID, uuid4
 from app.core.supabase import supabase
 
 
-def create_conversation() -> str:
-    """Create a new conversation and return its ID."""
+def create_conversation(user_id: str) -> str:
+    """Create a conversation associated with an authenticated user."""
 
     conversation_id = str(uuid4())
 
     supabase.table("conversations").insert({
-        "id": conversation_id
+        "id": conversation_id,
+        "user_id": user_id
     }).execute()
 
     return conversation_id
 
 
-def get_conversation(conversation_id: str) -> dict | None:
-    """Check whether a conversation exists."""
+def get_conversation(
+    conversation_id: str,
+    user_id: str
+) -> dict | None:
+    """Retrieve a conversation only if it belongs to the user."""
 
     try:
         UUID(conversation_id)
-    except ValueError:
+    except (ValueError, TypeError):
         return None
 
     response = (
         supabase.table("conversations")
-        .select("id")
+        .select("id, user_id")
         .eq("id", conversation_id)
+        .eq("user_id", user_id)
         .limit(1)
         .execute()
     )
@@ -38,12 +43,18 @@ def get_conversation(conversation_id: str) -> dict | None:
 def save_message(
     conversation_id: str,
     role: str,
-    content: str
+    content: str,
+    user_id: str
 ) -> None:
-    """Save a message to a conversation."""
+    """Save a message only if the conversation belongs to the user."""
 
     if role not in ("user", "assistant"):
         raise ValueError("Invalid message role")
+
+    conversation = get_conversation(conversation_id, user_id)
+
+    if not conversation:
+        raise ValueError("Invalid conversation ID")
 
     supabase.table("messages").insert({
         "conversation_id": conversation_id,
@@ -54,9 +65,15 @@ def save_message(
 
 def get_conversation_history(
     conversation_id: str,
+    user_id: str,
     limit: int = 20
 ) -> list[dict]:
-    """Fetch the latest messages in chronological order."""
+    """Fetch conversation history only for its authenticated owner."""
+
+    conversation = get_conversation(conversation_id, user_id)
+
+    if not conversation:
+        raise ValueError("Invalid conversation ID")
 
     response = (
         supabase.table("messages")

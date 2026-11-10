@@ -1,8 +1,9 @@
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
 from app.services.chat import process_chat
+from app.core.security import get_current_user
 
 router = APIRouter()
 
@@ -13,7 +14,10 @@ class ChatRequest(BaseModel):
 
 
 @router.post("/chat")
-async def chat(request: ChatRequest):
+async def chat(
+    request: ChatRequest,
+    current_user: dict = Depends(get_current_user)
+):
 
     if not request.message.strip():
         raise HTTPException(
@@ -25,6 +29,7 @@ async def chat(request: ChatRequest):
         return await process_chat(
             message=request.message,
             conversation_id=request.conversation_id,
+            user_id=current_user["user_id"],
         )
 
     except ValueError as e:

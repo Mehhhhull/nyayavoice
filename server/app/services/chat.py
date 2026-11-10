@@ -16,6 +16,7 @@ from app.services.conversations import (
 
 async def process_chat(
     message: str,
+    user_id: str,
     generate_speech: bool = False,
     language_code: str = "auto",
     conversation_id: str | None = None,
@@ -28,20 +29,21 @@ async def process_chat(
     # 1. Create or validate conversation
     if conversation_id:
         conversation = await run_in_threadpool(
-            get_conversation, conversation_id
+            get_conversation, conversation_id, user_id
         )
 
         if not conversation:
             raise ValueError("Invalid conversation ID")
     else:
         conversation_id = await run_in_threadpool(
-            create_conversation
+            create_conversation, user_id
         )
 
     # 2. Load previous conversation history
     history = await run_in_threadpool(
         get_conversation_history,
         conversation_id,
+        user_id,
         limit=10,
     )
 
@@ -51,9 +53,10 @@ async def process_chat(
         conversation_id,
         "user",
         message,
+        user_id,
     )
 
-    # 4. Retrieve knowledge using only the latest message
+    # 4. Retrieve knowledge
     chunks = await run_in_threadpool(
         retrieve_chunks,
         message,
@@ -70,7 +73,11 @@ async def process_chat(
         )
 
         await run_in_threadpool(
-            save_message, conversation_id, "assistant", answer
+            save_message,
+            conversation_id,
+            "assistant",
+            answer,
+            user_id,
         )
 
         return {
@@ -105,7 +112,7 @@ Content:
 
     context = "\n\n".join(context_parts)
 
-    # 7. Build conversation context for Gemini
+    # 7. Build conversation context
     history_text = "\n".join(
         f"{item['role'].upper()}: {item['content']}"
         for item in history
@@ -138,6 +145,7 @@ LATEST USER MESSAGE:
         conversation_id,
         "assistant",
         answer,
+        user_id,
     )
 
     # 11. Prepare unique source references
