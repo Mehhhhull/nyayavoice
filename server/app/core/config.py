@@ -1,4 +1,6 @@
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
     GNANI_API_KEY_ID: str
@@ -7,9 +9,12 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_SERVICE_ROLE_KEY: str
 
+    CLERK_FRONTEND_API_URL: str
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore"
     )
+
 
 settings = Settings()
