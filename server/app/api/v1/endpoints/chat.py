@@ -1,3 +1,4 @@
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -8,6 +9,7 @@ router = APIRouter()
 
 class ChatRequest(BaseModel):
     message: str
+    conversation_id: str | None = None
 
 
 @router.post("/chat")
@@ -20,7 +22,13 @@ async def chat(request: ChatRequest):
         )
 
     try:
-        return await process_chat(request.message)
+        return await process_chat(
+            message=request.message,
+            conversation_id=request.conversation_id,
+        )
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     except Exception:
         raise HTTPException(

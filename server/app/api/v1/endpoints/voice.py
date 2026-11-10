@@ -1,138 +1,31 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+
+from fastapi import (
+    APIRouter,
+    UploadFile,
+    File,
+    HTTPException,
+    Form,
+)
 import httpx
 import base64
 from pydantic import BaseModel
 from fastapi.responses import Response
-from app.services.chat import process_chat
-
 
 from app.services.chat import process_chat
-
-
 from app.services.gnani.stt import transcribe_audio
 from app.services.gnani.tts import synthesize_speech
 
 router = APIRouter()
+
 
 class TTSRequest(BaseModel):
     text: str
     voice: str = "Shivani"
     language: str = "hi-IN"
 
+
 @router.post("/stt")
-async def speech_to_text(
-    audio: UploadFile = File(...)
-):
-    if not audio.content_type or not audio.content_type.startswith("audio/"):
-        raise HTTPException(
-            status_code=400,
-            detail="Please upload an audio file"
-        )
-
-    audio_bytes = await audio.read()
-
-    if not audio_bytes:
-        raise HTTPException(
-            status_code=400,
-            detail="Audio file is empty"
-        )
-
-    try:
-        result = await transcribe_audio(
-            audio_bytes,
-            audio.filename or "recording.wav",
-            audio.content_type
-        )
-
-        return result
-
-    except httpx.HTTPStatusError as exc:
-        raise HTTPException(
-            status_code=502,
-            detail=f"Gnani API error: {exc.response.text}"
-        )
-
-    except httpx.RequestError:
-        raise HTTPException(
-            status_code=502,
-            detail="Could not connect to Gnani"
-        )
-
-
-@router.post("/ask")
-async def voice_ask(audio: UploadFile = File(...)):
-
-    # 1. Validate uploaded audio
-    if not audio.content_type or not audio.content_type.startswith("audio/"):
-        raise HTTPException(
-            status_code=400,
-            detail="Please upload an audio file"
-        )
-
-    audio_bytes = await audio.read()
-
-    if not audio_bytes:
-        raise HTTPException(
-            status_code=400,
-            detail="Audio file is empty"
-        )
-
-    try:
-        # 2. Convert speech into text using Gnani STT
-        stt_result = await transcribe_audio(
-            audio_bytes,
-            audio.filename or "recording.wav",
-            audio.content_type
-        )
-
-        transcript = stt_result.get("transcript", "").strip()
-
-        if not stt_result.get("success") or not transcript:
-            raise HTTPException(
-                status_code=502,
-                detail="Could not transcribe the audio"
-            )
-
-        # 3. Send transcript through our existing RAG + Gemini pipeline
-        chat_result = await process_chat(transcript)
-
-        # 4. Return everything to the frontend
-        return {
-            "transcript": transcript,
-            "detected_language_code": stt_result.get(
-                "detected_language_code"
-            ),
-            "response": chat_result["response"],
-            "sources": chat_result["sources"]
-        }
-
-    except HTTPException:
-        raise
-
-    except httpx.HTTPStatusError as exc:
-        raise HTTPException(
-            status_code=502,
-            detail=f"Gnani API error: {exc.response.text[:500]}"
-        )
-
-    except httpx.RequestError:
-        raise HTTPException(
-            status_code=502,
-            detail="Could not connect to Gnani"
-        )
-
-    except Exception:
-        raise HTTPException(
-            status_code=502,
-            detail="Unable to process your voice request"
-        )
-
-
-
-
-@router.post("/conversation")
-async def voice_conversation(audio: UploadFile = File(...)):
-
+async def speech_to_text(audio: UploadFile = File(...)):
     if not audio.content_type or not audio.content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Please upload an audio file")
 
@@ -142,7 +35,34 @@ async def voice_conversation(audio: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Audio file is empty")
 
     try:
-        # 1. STT
+        return await transcribe_audio(
+            audio_bytes,
+            audio.filename or "recording.wav",
+            audio.content_type
+        )
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Gnani API error: {exc.response.text[:500]}"
+        )
+    except httpx.RequestError:
+        raise HTTPException(status_code=502, detail="Could not connect to Gnani")
+
+
+@router.post("/ask")
+async def voice_ask(
+    audio: UploadFile = File(...),
+    conversation_id: str | None = Form(None)
+):
+    if not audio.content_type or not audio.content_type.startswith("audio/"):
+        raise HTTPException(status_code=400, detail="Please upload an audio file")
+
+    audio_bytes = await audio.read()
+
+    if not audio_bytes:
+        raise HTTPException(status_code=400, detail="Audio file is empty")
+
+    try:
         stt_result = await transcribe_audio(
             audio_bytes,
             audio.filename or "recording.wav",
@@ -154,15 +74,81 @@ async def voice_conversation(audio: UploadFile = File(...)):
         if not stt_result.get("success") or not transcript:
             raise HTTPException(status_code=502, detail="Could not transcribe audio")
 
-        # 2. RAG + Gemini
-        chat_result = await process_chat(transcript)
+        language_code = stt_result.get("detected_language_code") or "hi-IN"
+
+        chat_result = await process_chat(
+            message=transcript,
+            language_code=language_code,
+            conversation_id=conversation_id
+        )
+
+        return {
+            "conversation_id": chat_result["conversation_id"],
+            "transcript": transcript,
+            "detected_language_code": language_code,
+            "response": chat_result["response"],
+            "sources": chat_result["sources"]
+        }
+
+    except HTTPException:
+        raise
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Gnani API error: {exc.response.text[:500]}"
+        )
+    except httpx.RequestError:
+        raise HTTPException(status_code=502, detail="Could not connect to Gnani")
+    except Exception:
+        raise HTTPException(status_code=502, detail="Unable to process your voice request")
+
+
+@router.post("/conversation")
+async def voice_conversation(
+    audio: UploadFile = File(...),
+    conversation_id: str | None = Form(None)
+):
+    if not audio.content_type or not audio.content_type.startswith("audio/"):
+        raise HTTPException(status_code=400, detail="Please upload an audio file")
+
+    audio_bytes = await audio.read()
+
+    if not audio_bytes:
+        raise HTTPException(status_code=400, detail="Audio file is empty")
+
+    try:
+        # 1. Speech to text
+        stt_result = await transcribe_audio(
+            audio_bytes,
+            audio.filename or "recording.wav",
+            audio.content_type
+        )
+
+        transcript = stt_result.get("transcript", "").strip()
+
+        if not stt_result.get("success") or not transcript:
+            raise HTTPException(status_code=502, detail="Could not transcribe audio")
+
+        language_code = stt_result.get("detected_language_code") or "hi-IN"
+
+        # 2. RAG + Gemini + conversation history
+        chat_result = await process_chat(
+            message=transcript,
+            generate_speech=True,
+            language_code=language_code,
+            conversation_id=conversation_id
+        )
+
         answer = chat_result["response"]
         speech_text = chat_result["speech_response"]
 
+        # 3. Text to speech
         audio_output = await synthesize_speech(
             text=speech_text,
             voice="Shivani",
-            language="hi-IN"
+            language=language_code
         )
 
         if not audio_output:
@@ -172,8 +158,9 @@ async def voice_conversation(audio: UploadFile = File(...)):
         audio_base64 = base64.b64encode(audio_output).decode("utf-8")
 
         return {
+            "conversation_id": chat_result["conversation_id"],
             "transcript": transcript,
-            "detected_language_code": stt_result.get("detected_language_code"),
+            "detected_language_code": language_code,
             "response": answer,
             "sources": chat_result["sources"],
             "audio_format": "wav",
@@ -182,19 +169,15 @@ async def voice_conversation(audio: UploadFile = File(...)):
 
     except HTTPException:
         raise
-
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
     except httpx.HTTPStatusError as exc:
-        print("GNANI HTTP ERROR:", exc.response.status_code)
-        print("GNANI RESPONSE:", exc.response.text[:2000])
         raise HTTPException(
             status_code=502,
-            detail=f"External API error: {exc.response.text[:1000]}"
+            detail=f"External API error: {exc.response.text[:500]}"
         )
-
-    except httpx.RequestError as exc:
-        print("NETWORK ERROR:", repr(exc))
+    except httpx.RequestError:
         raise HTTPException(status_code=502, detail="Could not connect to Gnani")
-
     except Exception as exc:
         import traceback
         traceback.print_exc()
@@ -203,16 +186,11 @@ async def voice_conversation(audio: UploadFile = File(...)):
             detail=f"Voice conversation failed: {str(exc)}"
         )
 
-    
 
 @router.post("/tts")
 async def text_to_speech(request: TTSRequest):
-
     if not request.text.strip():
-        raise HTTPException(
-            status_code=400,
-            detail="Text cannot be empty"
-        )
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
 
     try:
         audio_bytes = await synthesize_speech(
@@ -234,7 +212,6 @@ async def text_to_speech(request: TTSRequest):
             status_code=502,
             detail=f"Gnani TTS error: {exc.response.text[:500]}"
         )
-
     except httpx.RequestError:
         raise HTTPException(
             status_code=502,
