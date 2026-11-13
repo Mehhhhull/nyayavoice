@@ -45,17 +45,20 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider
-    appearance={{
-      theme:dark,
-      variables: {
-        colorPrimary: '#0D0E0B',
-        colorForeground: '#F5F5F5' },
-      }}
-    >
-      <html lang="en-IN" className={`${display.variable} ${body.variable} ${mono.variable} ${deva.variable} ${devaDisplay.variable}`}>
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
+    <html lang="en-IN" className={`${display.variable} ${body.variable} ${mono.variable} ${deva.variable} ${devaDisplay.variable}`}>
+        <body>
+          <ClerkProvider
+            appearance={{
+              theme: dark,
+              variables: {
+                colorPrimary: '#0D0E0B',
+                colorForeground: '#F5F5F5',
+              },
+            }}
+          >
+            {children}
+          </ClerkProvider>
+        </body>
+    </html>
   );
 }

@@ -27,6 +27,7 @@ export default function Nav() {
               </SignUpButton>
             </Show>
             <Show when="signed-in">
+              <a className="btn sm" href="/dashboard">Dashboard</a>
               <UserButton />
             </Show>
           </Suspense>
