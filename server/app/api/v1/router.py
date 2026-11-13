@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import health, voice, chat
+from app.api.v1.endpoints import health, voice, chat, conversations
 
 
 api_router = APIRouter()
@@ -16,6 +16,12 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    chat.router, 
+    chat.router,
     tags=["Chat"]
+)
+
+api_router.include_router(
+    conversations.router,
+    prefix="/conversations",
+    tags=["Conversations"]
 )
