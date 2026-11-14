@@ -66,9 +66,27 @@ The integration is implemented in [`server/app/services/gnani/stt.py`](server/ap
 
 ## Screenshots
 
-Add screenshots here when ready.
+Add screenshots at the paths below:
+
+### Landing page
+
+![NyayaVoice landing page](docs/screenshots/landing-page.png)
+
+### Dashboard chat
+
+![NyayaVoice dashboard chat](docs/screenshots/dashboard-chat.png)
+
+### Voice conversation
+
+![NyayaVoice voice conversation](docs/screenshots/voice-conversation.png)
+
+### Answer and sources
+
+![NyayaVoice answer with source links](docs/screenshots/answer-sources.png)
 
 ## System architecture
+
+![NyayaVoice system architecture diagram](docs/system-architecture.png)
 
 ```text
 Browser
