@@ -1,6 +1,26 @@
+<!-- Add your hero artwork at docs/hero-banner.png. -->
+![NyayaVoice — voice-first consumer-rights support](docs/hero-banner.png)
+
 # NyayaVoice
 
-**Understand your consumer rights by speaking naturally.** NyayaVoice is a voice-first consumer-rights assistant focused on India. Ask in Hindi, Hinglish, or English to get practical next steps, relevant sources, an evidence checklist, and help drafting a complaint.
+### “Bolo. Samjho. Apne consumer rights jaano.”
+
+**Voice-first consumer-rights support for India.**
+
+Ask in Hindi, Hinglish, or English to get practical next steps, relevant sources, an evidence checklist, and help drafting a complaint.
+
+[![Next.js](https://img.shields.io/badge/Next.js-15-000000)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Language-3178C6)](https://www.typescriptlang.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688)](https://fastapi.tiangolo.com/)
+[![Gemini](https://img.shields.io/badge/Google-Gemini-4285F4)](https://ai.google.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-3FCF8E)](https://supabase.com/)
+[![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF)](https://clerk.com/)
+[![Gnani](https://img.shields.io/badge/Gnani-Voice-FF6B35)](https://www.gnani.ai/)
+
+[Get Started](#run-locally) · [System Architecture](#system-architecture) · [Demo Video](#demo-video) · [API Reference](#api-reference)
+
+---
 
 > NyayaVoice provides general information, not legal advice. It cannot guarantee an outcome or submit a complaint on your behalf. Check the linked official sources and verify important legal information before acting.
 
@@ -15,6 +35,34 @@
 ### The demo and the dashboard are different
 
 The landing-page demo is a frontend-only animation using sample data in `client/lib/data.ts`. It does not record audio or call the backend. The authenticated dashboard at `/dashboard` is the real application flow: it records audio in the browser and sends the request to the API.
+
+## Key features
+
+| # | Feature | What it does |
+| --- | --- | --- |
+| 01 | Multilingual voice input | Records a spoken consumer-rights question in the dashboard and uploads it as WAV audio for transcription. The voice workflow is designed for Hindi, Hinglish, and English. |
+| 02 | Gnani Prisma STT integration | The backend calls Gnani's speech-to-text API using **Prisma v3.0** (`prisma-v3.0`) with `indic-auto` language selection. The resulting transcript and detected language are passed into the assistant flow. |
+| 03 | Source-grounded answers | Gemini Embedding 2 creates a query embedding; Supabase retrieves relevant knowledge chunks; Gemini 3.5 Flash Lite generates an answer using those sources and recent conversation history. |
+| 04 | Gnani Timbre voice guidance | In voice-conversation mode, Gemini prepares a shorter spoken version of the answer and Gnani's text-to-speech API generates audio using **Timbre v3.0** (`timbre-v3.0`, `Shivani` voice). The API returns mono WAV audio at 48 kHz. |
+| 05 | Listen to answers | The dashboard can request a spoken version of an existing text answer through the authenticated text-to-speech endpoint. |
+| 06 | Conversation history | Clerk authenticates users; conversations and messages are stored in Supabase so users can continue earlier chats. |
+| 07 | Scripted landing-page demo | Shows an animated sample interaction using preset content. It does not record audio or call Gnani, Gemini, or the backend. |
+
+### Voice request flow
+
+```text
+Microphone → WAV upload → FastAPI → Gnani Prisma STT
+                                   ↓ transcript + detected language
+                       Gemini embedding → Supabase retrieval
+                                   ↓ relevant source chunks
+                       Gemini answer → answer + source links
+                                   ↓ voice mode only
+                       Gemini speech text → Gnani Timbre TTS → WAV playback
+```
+
+**Gnani's role:** Prisma converts the user's speech to text, and Timbre converts generated spoken guidance to audio. Gemini handles the knowledge-grounded answer and its speech-friendly rewrite; Supabase stores conversation history and provides retrieved knowledge. Gnani credentials are used by the backend and should never be placed in frontend code.
+
+The integration is implemented in [`server/app/services/gnani/stt.py`](server/app/services/gnani/stt.py) and [`server/app/services/gnani/tts.py`](server/app/services/gnani/tts.py). The STT request uses `https://api.vachana.ai/stt/v3` with `model=prisma-v3.0` and `language_code=indic-auto`. The TTS request uses `https://api.vachana.ai/api/v1/tts/inference` with `model=timbre-v3.0`; voice conversations request mono WAV audio at 48 kHz.
 
 ## Screenshots
 
@@ -57,7 +105,7 @@ Add a link to the NyayaVoice demo video here.
 | Language model | Google Gemini (`gemini-3.5-flash-lite`) |
 | Embeddings | Google Gemini (`gemini-embedding-2`, 768 dimensions) |
 | Retrieval and persistence | Supabase, with a `match_document_chunks` RPC |
-| Speech | Gnani Prisma STT and Timbre TTS |
+| Speech | Gnani Prisma v3.0 STT and Timbre v3.0 TTS |
 
 ## Repository layout
 
@@ -75,6 +123,7 @@ server/
   data/knowledge/           Local Markdown knowledge source
   scripts/                 Knowledge ingestion utility
   tests/                   Manual integration/smoke scripts
+docs/                      README hero image and project screenshots
 ```
 
 ## Run locally
@@ -163,24 +212,200 @@ The repository does not include SQL migrations for these objects. Set up the sch
 
 Use environment variables in your hosting provider for deployment. Do not commit `.env` files, screenshots containing secrets, or real user recordings.
 
-## API overview
+## API Reference
 
-Versioned application endpoints are under `/api/v1`. Except for the backend root welcome route and `/health`, API routes require a Clerk Bearer token.
+The local API base URL is `http://127.0.0.1:8000`; versioned routes use the `/api/v1` prefix. For example, the chat endpoint is `http://127.0.0.1:8000/api/v1/chat`. The frontend's `NEXT_PUBLIC_API_URL` should contain only the server origin, not `/api/v1`.
 
-| Method | Path | Purpose |
+FastAPI's interactive reference is available at `http://127.0.0.1:8000/docs` while the backend is running.
+
+### Authentication
+
+Send a Clerk session token with every application request except `GET /` and `GET /api/v1/health`:
+
+```http
+Authorization: Bearer <clerk-session-token>
+```
+
+Conversation IDs are scoped to the signed-in user. Supplying another user's conversation ID will not grant access to it.
+
+### Endpoint summary
+
+| Method | Path | Authentication | What it does |
+| --- | --- | --- | --- |
+| `GET` | `/` | No | Backend welcome and status |
+| `GET` | `/api/v1/health` | No | Backend health check |
+| `GET` | `/api/v1/health/protected` | Yes | Verifies the session token |
+| `POST` | `/api/v1/chat` | Yes | RAG-backed text conversation |
+| `GET` | `/api/v1/conversations/` | Yes | Lists the user's conversations |
+| `GET` | `/api/v1/conversations/{conversation_id}/messages` | Yes | Loads messages from an owned conversation |
+| `POST` | `/api/v1/voice/stt` | Yes | Transcribes uploaded audio |
+| `POST` | `/api/v1/voice/ask` | Yes | Transcribes audio, then returns a text answer |
+| `POST` | `/api/v1/voice/conversation` | Yes | Transcribes audio and returns a text and spoken answer |
+| `POST` | `/api/v1/voice/tts` | Yes | Converts text into a WAV audio response |
+
+### `GET /` and `GET /api/v1/health`
+
+Use these unauthenticated routes to check that the backend is reachable.
+
+`GET /` returns:
+
+```json
+{ "message": "Welcome to NyayaVoice Backend", "status": "running" }
+```
+
+`GET /api/v1/health` returns:
+
+```json
+{ "status": "healthy", "service": "NyayaVoice Backend" }
+```
+
+### `GET /api/v1/health/protected`
+
+Requires a valid Clerk token. Useful for checking that the backend can verify the current session.
+
+```json
+{
+  "status": "authenticated",
+  "user_id": "<clerk-user-id>",
+  "session_id": "<clerk-session-id>"
+}
+```
+
+### `POST /api/v1/chat`
+
+Send JSON containing a non-empty `message`. Include `conversation_id` to continue an existing conversation; omit it to create a new one. The backend loads recent history, retrieves relevant knowledge-base chunks, generates an answer with Gemini, and stores the user and assistant messages.
+
+```json
+{
+  "message": "A seller refused my refund. What can I do?",
+  "conversation_id": "<optional-conversation-uuid>"
+}
+```
+
+Response:
+
+```json
+{
+  "conversation_id": "<conversation-uuid>",
+  "response": "<source-grounded answer>",
+  "speech_response": null,
+  "sources": [
+    {
+      "title": "<source title>",
+      "url": "<source URL>",
+      "authority": "<source authority>",
+      "verification_status": "<source status>",
+      "chunk_refs": [1]
+    }
+  ]
+}
+```
+
+The `sources` array may be empty when retrieval finds no sufficiently relevant information. A blank message returns `400`; an invalid conversation ID returns `400`.
+
+### `GET /api/v1/conversations/`
+
+Lists conversations belonging to the authenticated user, most recently active first.
+
+```json
+{
+  "conversations": [
+    {
+      "id": "<conversation-uuid>",
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>"
+    }
+  ]
+}
+```
+
+### `GET /api/v1/conversations/{conversation_id}/messages`
+
+Returns up to 100 messages from the specified conversation, in chronological order. The conversation must belong to the authenticated user.
+
+```json
+{
+  "conversation_id": "<conversation-uuid>",
+  "messages": [
+    {
+      "id": "<message-id>",
+      "role": "user",
+      "content": "<message text>",
+      "created_at": "<timestamp>"
+    }
+  ]
+}
+```
+
+Returns `404` when the conversation does not exist or is not owned by the current user.
+
+### `POST /api/v1/voice/stt`
+
+Send `multipart/form-data` with an `audio` file whose content type starts with `audio/`. This route sends the recording to Gnani Prisma and returns the transcription provider's JSON response. It does not create a chat response.
+
+The dashboard recorder currently sends WAV audio. An unsupported or empty upload returns `400`; a Gnani service or connection failure returns `502`.
+
+### `POST /api/v1/voice/ask`
+
+Send `multipart/form-data` containing:
+
+| Field | Required | Description |
 | --- | --- | --- |
-| `GET` | `/` | Backend welcome/status response |
-| `GET` | `/health` | Unauthenticated service health |
-| `GET` | `/health/protected` | Authenticated token check |
-| `POST` | `/chat` | Send a text question; accepts `message` and optional `conversation_id` |
-| `GET` | `/conversations/` | List the signed-in user's conversations |
-| `GET` | `/conversations/{conversation_id}/messages` | Load messages for an owned conversation |
-| `POST` | `/voice/stt` | Transcribe an uploaded audio file |
-| `POST` | `/voice/ask` | Transcribe audio and return a text answer |
-| `POST` | `/voice/conversation` | Transcribe audio and return an answer with generated speech |
-| `POST` | `/voice/tts` | Convert supplied text to WAV speech |
+| `audio` | Yes | Audio recording (`audio/*`) |
+| `conversation_id` | No | Existing conversation UUID to continue |
 
-Chat responses include a `conversation_id`, answer text, source references, and an optional speech-ready response. Voice requests use multipart form data with an `audio` file; the ask/conversation routes can also receive a `conversation_id`.
+The backend transcribes the audio, uses the transcript as the chat message, saves the conversation, and returns a text answer with source references.
+
+```json
+{
+  "conversation_id": "<conversation-uuid>",
+  "transcript": "<recognized speech>",
+  "detected_language_code": "hi-IN",
+  "response": "<source-grounded answer>",
+  "sources": []
+}
+```
+
+### `POST /api/v1/voice/conversation`
+
+Uses the same multipart fields and processing as `/voice/ask`, then generates spoken guidance using Gnani Timbre. The JSON response includes the transcript, answer, source references, and base64-encoded WAV audio:
+
+```json
+{
+  "conversation_id": "<conversation-uuid>",
+  "transcript": "<recognized speech>",
+  "detected_language_code": "hi-IN",
+  "response": "<source-grounded answer>",
+  "sources": [],
+  "audio_format": "wav",
+  "audio_base64": "<base64-encoded-audio>"
+}
+```
+
+### `POST /api/v1/voice/tts`
+
+Send JSON with the text to speak. `voice` and `language` are optional; they default to `Shivani` and `hi-IN`.
+
+```json
+{
+  "text": "Keep your receipt and contact the seller in writing.",
+  "voice": "Shivani",
+  "language": "hi-IN"
+}
+```
+
+Returns WAV audio bytes (`Content-Type: audio/wav`), not JSON. Empty text returns `400`; a Gnani service or connection failure returns `502`.
+
+### Common errors
+
+| Status | Meaning |
+| --- | --- |
+| `400` | Empty message, audio, or text; non-audio upload; or invalid conversation ID |
+| `401` | Missing, invalid, expired, or wrong-origin Clerk token |
+| `404` | Conversation not found or not owned by the signed-in user |
+| `422` | Required request field is missing or fails FastAPI validation |
+| `500` | Voice conversation failed unexpectedly |
+| `502` | AI, speech provider, or upstream request failed |
 
 ## Knowledge base
 
