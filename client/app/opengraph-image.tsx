@@ -29,7 +29,7 @@ export default function OgImage() {
           <span>Samjho.</span>
           <span style={{ color: '#F2A93B', fontStyle: 'italic' }}>Karo.</span>
         </div>
-        <div style={{ fontSize: 30, color: '#B4AFA1' }}>Voice-first help for consumer complaints and challans, in Hindi and Hinglish.</div>
+        <div style={{ fontSize: 30, color: '#B4AFA1' }}>Voice-first help for consumer complaints in Hindi and Hinglish.</div>
       </div>
     ),
     size,

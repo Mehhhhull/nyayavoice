@@ -1,9 +1,8 @@
 import { LINKS } from '@/lib/data';
 
 const NO: [string, string][] = [
-  ['Nateeje ki guarantee nahi.', 'Refund ya challan cancel hone ka vaada nahi karta.'],
+  ['Nateeje ki guarantee nahi.', 'Refund milne ka vaada nahi karta.'],
   ['Kanoon ya section number nahi ghadta.', 'Jo official source mein nahi, woh nahi bolta.'],
-  ['Challan ko galat ya sahi nahi theherata.', 'Sirf verify aur contest karne ka tareeka dikhata hai.'],
   ['Shikayat khud submit nahi karta.', 'Draft aapka hai, bhejna aapke haath mein.'],
   ['Aadhaar, PAN ya bank details nahi maangta.', 'Zaroorat hi nahi hoti.'],
   ['Offline hone ka daava nahi.', 'Voice ke liye internet chahiye.'],
@@ -12,7 +11,6 @@ const NO: [string, string][] = [
 const SOURCES: [string, string, string][] = [
   ['Consumer Protection Act, 2019', 'India Code', LINKS.act],
   ['National Consumer Helpline', 'Portal · 1915', LINKS.helpline],
-  ['eChallan', 'Parivahan', LINKS.echallan],
 ];
 
 export default function Trust() {

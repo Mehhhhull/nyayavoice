@@ -19,7 +19,7 @@ const jsonLd = {
     {
       '@type': 'WebSite',
       name: 'NyayaVoice',
-      description: 'Voice-first Indian rights assistant for consumer complaints and challan questions in Hindi and Hinglish.',
+      description: 'Voice-first Indian consumer-rights assistant for Hindi and Hinglish speakers.',
       inLanguage: ['hi-IN', 'en-IN'],
     },
     {
@@ -27,7 +27,7 @@ const jsonLd = {
       name: 'NyayaVoice',
       applicationCategory: 'UtilitiesApplication',
       operatingSystem: 'Web',
-      description: 'Speak a consumer or challan problem in Hindi or Hinglish, get official sources, next steps, an evidence checklist and a complaint draft, read aloud.',
+      description: 'Speak a consumer problem in Hindi or Hinglish, get official sources, next steps, an evidence checklist and a complaint draft, read aloud.',
     },
     {
       '@type': 'FAQPage',

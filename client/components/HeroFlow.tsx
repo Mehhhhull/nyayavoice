@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 
 const GHOST =
-  'bhaiya woh phone jo pichhle hafte liya tha na, uska screen kharab nikla aur seller bol raha hai refund nahi milega, ab kya karun samajh nahi aa raha, challan bhi galat kat gaya hai shayad…   ';
+  'bhaiya woh phone jo pichhle hafte liya tha na, uska screen kharab nikla aur seller bol raha hai refund nahi milega, ab kya karun samajh nahi aa raha…   ';
 const RIBBON =
   'Complaint regarding defective mobile phone   ·   Consumer Protection Act, 2019   ·   Draft ready to send   ·   Official source linked   ·   ';
 const REPEAT = 4;
-const WORDS = ['refund nahi mila?', 'challan galat hai?', 'phone kharab nikla?', 'seller sun nahi raha?'];
+const WORDS = ['refund nahi mila?', 'phone kharab nikla?', 'seller sun nahi raha?'];
 const BARS = 30;
 
 const GHOST_D =

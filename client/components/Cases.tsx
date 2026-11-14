@@ -1,11 +1,7 @@
-'use client';
-
-import { useState } from 'react';
-import { DATA, type Key } from '@/lib/data';
+import { DATA } from '@/lib/data';
 
 export default function Cases() {
-  const [k, setK] = useState<Key>('consumer');
-  const c = DATA[k].c;
+  const c = DATA.consumer.c;
   const list = (a: string[]) => a.map((x) => <li key={x}>{x}</li>);
 
   return (
@@ -17,8 +13,7 @@ export default function Cases() {
             <h2 className="rv" style={{ marginTop: 14 }}>Do roz ki <em>problems</em>, abhi ke liye.</h2>
           </div>
           <div className="seg rv" role="tablist" aria-label="Use case">
-            <button role="tab" aria-selected={k === 'consumer'} onClick={() => setK('consumer')}>Online order</button>
-            <button role="tab" aria-selected={k === 'challan'} onClick={() => setK('challan')}>Challan</button>
+            <button role="tab" aria-selected="true">Online order</button>
           </div>
         </div>
         <div className="case" aria-live="polite">

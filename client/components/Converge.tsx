@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 /* [label, x offset (share of width), y offset (share of height), rotation] */
 const TABS: [string, number, number, number][] = [
   ['consumerhelpline.gov.in', -0.36, -0.3, -7],
-  ['echallan.parivahan.gov.in', 0.3, -0.34, 6],
+  ['return policy · page 7 of 9', 0.3, -0.34, 6],
   ['indiacode.nic.in', -0.38, 0.08, 5],
   ['Consumer Protection Act 2019.pdf', 0.28, 0.02, -6],
   ['forum thread (2014)', -0.26, 0.36, -4],

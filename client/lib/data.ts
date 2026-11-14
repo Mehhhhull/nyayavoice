@@ -1,4 +1,4 @@
-export type Key = 'consumer' | 'challan';
+export type Key = 'consumer';
 
 export type Scenario = {
   say: string;
@@ -20,7 +20,6 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://your-domain
 
 export const LINKS = {
   helpline: 'https://consumerhelpline.gov.in/',
-  echallan: 'https://echallan.parivahan.gov.in/',
   act: 'https://www.indiacode.nic.in/indiacode/handle/123456789/15256',
 };
 
@@ -48,32 +47,11 @@ export const DATA: Record<Key, Scenario> = {
       ch: ['National Consumer Helpline', LINKS.helpline],
     },
   },
-  challan: {
-    say: 'Mere bike ka challan galat lag raha hai. Photo mein meri bike bhi clear nahi hai. Main kya karun?',
-    mark: 'challan galat lag raha hai',
-    steps: [
-      'Challan ko official eChallan portal par vehicle ya challan number se check karo.',
-      'Photo ya notice mein jo galat dikh raha hai, uska screenshot rakho.',
-      'Portal ya notice mein bataye gaye raaste se apni baat likhit mein rakho.',
-    ],
-    src: [['eChallan (Parivahan)', LINKS.echallan]],
-    draft:
-      'To,\nThe Competent Authority\n\nSubject: Representation regarding challan no. [challan number]\n\nI request a review of the above challan. The photograph does not clearly show my vehicle: [describe]. Supporting evidence is attached.\n\n[Your name] · [Vehicle no.]',
-    c: {
-      quote: '“Challan galat lag raha hai. Photo mein meri bike clear nahi hai.”',
-      who: 'Motorist',
-      asks: ['Kis state ka challan hai?', 'Challan number kya hai?', 'Challan ka notice ya photo aapke paas hai?'],
-      keep: ['Challan number aur notice', 'Photo ka screenshot', 'Vehicle documents ki copy', 'Date, time aur jagah ki details'],
-      no: ['Challan ko “illegal” nahi kehta', 'Bhugtaan se bachne ka tareeka nahi batata'],
-      ch: ['eChallan portal', LINKS.echallan],
-    },
-  },
 };
 
 export const PHRASES = [
   'Seller reply nahi de raha',
   'Refund ka paisa wapas nahi aaya',
-  'Challan mein bike clear nahi hai',
   'Warranty mein repair se mana kar diya',
   'Galat item aa gaya',
   'Order cancel hua, paisa kat gaya',
@@ -85,10 +63,6 @@ export const FAQ: { q: string; a: string }[] = [
   {
     q: 'Defective product ka refund seller na de to kya karein?',
     a: 'Pehle invoice, order ID aur defect ki photo ya video sambhal ke rakho, phir seller ko refund ki maang likhit mein bhejo. Jawab na mile ya mana kar de, to National Consumer Helpline (portal ya 1915) par shikayat darj kar sakte ho. NyayaVoice yeh steps official source ke saath dikhata hai aur shikayat ka draft taiyaar karta hai.',
-  },
-  {
-    q: 'Galat challan ko kaise check karein?',
-    a: 'Sabse pehle official eChallan portal (echallan.parivahan.gov.in) par vehicle ya challan number se challan verify karo. Agar kuch galat lage, to usi portal ya notice mein bataye gaye raaste se likhit mein apni baat rakho. NyayaVoice yeh nahi kehta ki challan galat hai ya sahi; woh sirf verify aur contest karne ka tareeka dikhata hai.',
   },
   {
     q: 'Kya NyayaVoice mera case lad sakta hai?',
@@ -112,6 +86,6 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'Jawab kahan se aate hain?',
-    a: 'Chuni hui official sources se: Consumer Protection Act, 2019 (India Code), National Consumer Helpline, aur Parivahan ka eChallan portal. Har important baat ke saath source ka link hota hai. Source na mile to NyayaVoice saaf bolta hai ki woh verify nahi kar paya.',
+    a: 'Chuni hui official sources se: Consumer Protection Act, 2019 (India Code) aur National Consumer Helpline. Har important baat ke saath source ka link hota hai. Source na mile to NyayaVoice saaf bolta hai ki woh verify nahi kar paya.',
   },
 ];

@@ -15,18 +15,16 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: 'NyayaVoice',
   description:
-    'NyayaVoice helps you handle a defective product, a refund refusal or a wrong challan. Speak in Hindi or Hinglish, get official next steps, a complaint draft and a spoken answer.',
+    'NyayaVoice helps you handle a defective product or a refund refusal. Speak in Hindi or Hinglish, get official next steps, a complaint draft and a spoken answer.',
   keywords: [
     'refund nahi mil raha kya kare',
     'defective product complaint kaise kare',
     'consumer helpline 1915',
-    'challan galat hai kaise check kare',
-    'e-challan dispute process',
     'online shopping complaint India',
   ],
   alternates: { canonical: '/', languages: { 'en-IN': '/', 'hi-IN': '/' } },
   openGraph: {
-    title: 'NyayaVoice: bolkar apne consumer aur challan rights samjho',
+    title: 'NyayaVoice: bolkar apne consumer rights samjho',
     description: 'Speak your problem in Hindi or Hinglish. Get official sources, an evidence checklist and a complaint draft.',
     type: 'website',
     locale: 'en_IN',

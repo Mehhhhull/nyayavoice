@@ -6,7 +6,6 @@ export default function Footer() {
       <div className="wrap">
         <div className="links">
           <a href={LINKS.helpline} target="_blank" rel="noopener noreferrer">National Consumer Helpline</a>
-          <a href={LINKS.echallan} target="_blank" rel="noopener noreferrer">eChallan portal</a>
           <a href={LINKS.act} target="_blank" rel="noopener noreferrer">Consumer Protection Act, 2019</a>
         </div>
         <p>

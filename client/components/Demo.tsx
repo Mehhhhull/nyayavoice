@@ -24,8 +24,8 @@ function Say({ k, n }: { k: Key; n: number }) {
 const reduced = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export default function Demo() {
-  const [key, setKey] = useState<Key>('consumer');
-  const d = DATA[key];
+  const key: Key = 'consumer';
+  const d = DATA.consumer;
 
   const [rec, setRec] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -138,14 +138,6 @@ export default function Demo() {
     }, wait);
   };
 
-  const pick = (k: Key) => {
-    token.current++;
-    recRef.current = false;
-    setRec(false);
-    setKey(k);
-    showStatic(k);
-  };
-
   const copy = () => {
     const txt = draftRef.current?.textContent ?? '';
     const done = () => {
@@ -203,8 +195,7 @@ export default function Demo() {
       <div className="demo-top">
         <span className="tag">Sample demo · not a live recording</span>
         <div className="seg" role="tablist" aria-label="Sample scenario">
-          <button role="tab" aria-selected={key === 'consumer'} onClick={() => pick('consumer')}>Consumer</button>
-          <button role="tab" aria-selected={key === 'challan'} onClick={() => pick('challan')}>Challan</button>
+          <button role="tab" aria-selected="true">Consumer</button>
         </div>
       </div>
 

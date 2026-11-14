@@ -9,13 +9,13 @@ export default function Hero() {
         <div className="hero-copy">
           <p className="eyebrow">Voice-first help · Hindi · Hinglish · English</p>
           <h1>
-            <span className="sr">NyayaVoice: voice-first help for consumer complaints and wrong challans in Hindi and Hinglish. </span>
+            <span className="sr">NyayaVoice: voice-first help for consumer complaints in Hindi and Hinglish. </span>
             <span className="ln1" aria-hidden="true"><span>Bolo. Samjho.</span></span>
             <span className="ln1" aria-hidden="true"><span>Karo.</span></span>
           </h1>
           <RollingLine />
           <p className="lead">
-            Consumer ya challan ki pareshani apni zubaan mein kahiye. NyayaVoice official sources dhoondhkar agle kadam aur shikayat ka draft taiyar karta hai.
+            Consumer ki pareshani apni zubaan mein kahiye. NyayaVoice official sources dhoondhkar agle kadam aur shikayat ka draft taiyar karta hai.
           </p>
           <div className="cta-row">
             <a className="btn pri mag" href="#how">Explore how it works</a>

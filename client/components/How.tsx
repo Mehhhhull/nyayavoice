@@ -21,7 +21,7 @@ const STEPS: { n: string; title: string; body: string; hi: string; ill: ReactNod
   {
     n: 'KADAM 2',
     title: 'Pehle confirm, phir jawab',
-    body: 'Transcript screen par dikhta hai. Price, date ya challan number galat suna gaya ho to usi waqt theek kar do. Galat suni baat par salah nahi milegi.',
+    body: 'Transcript screen par dikhta hai. Price, date ya order ID galat suna gaya ho to usi waqt theek kar do. Galat suni baat par salah nahi milegi.',
     hi: '“Kya maine sahi samjha?”',
     ill: (
       <svg className="ill" viewBox="0 0 240 180" role="img" aria-label="Line drawing of a transcript card with a highlighted number being edited">
