@@ -474,7 +474,7 @@ Fonts use `next/font/google`, so the frontend build must be able to fetch the fo
 
 ## Author
 
-- Name: [Your name]
-- GitHub: [Your GitHub profile]
-- LinkedIn: [Your LinkedIn profile]
-- Email: [Your contact email]
+- Name: Mehul Kumar Singh
+- GitHub: [https://github.com/Mehhhhull](https://github.com/Mehhhhull)
+- LinkedIn: [[Your LinkedIn profile]](https://www.linkedin.com/in/mehul-kumar-singh-655b5432b)
+- Email: mehulkumarsingh.2004@gmail.com
