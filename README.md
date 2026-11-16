@@ -18,7 +18,7 @@ Ask in Hindi, Hinglish, or English to get practical next steps, relevant sources
 [![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF)](https://clerk.com/)
 [![Gnani](https://img.shields.io/badge/Gnani-Voice-FF6B35)](https://www.gnani.ai/)
 
-[Get Started](#run-locally) · [System Architecture](#system-architecture) · [Demo Video](#demo-video) · [API Reference](#api-reference)
+[Get Started](#run-locally) · [System Architecture](#system-architecture) · [Demo Video](#demo-video) · [API Reference](#api-reference) . [Detailed 1-Page Documentation](https://drive.google.com/drive/folders/1UIzuKL8qQ7-mN7bWxTBMg-bo_ODrxRD-)
 
 ---
 
